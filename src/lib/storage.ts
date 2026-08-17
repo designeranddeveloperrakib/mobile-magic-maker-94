@@ -133,6 +133,35 @@ export function toDateKey(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
+export function parseDateKey(date: string): Date {
+  return new Date(date + "T00:00:00");
+}
+
+/** Date key for a 1-based challenge day number. */
+export function dateForDayNumber(startDate: string, dayNumber: number): string {
+  const d = parseDateKey(startDate);
+  d.setDate(d.getDate() + (dayNumber - 1));
+  return toDateKey(d);
+}
+
+/** 1-based challenge day number for a date key (can be <1 or >365). */
+export function dayNumberForDate(startDate: string, date: string): number {
+  const diff = parseDateKey(date).getTime() - parseDateKey(startDate).getTime();
+  return Math.floor(diff / 86400000) + 1;
+}
+
+export type DayStatus = "completed" | "partial" | "missed" | "today" | "future";
+
+export function getDayStatus(data: ChallengeData, date: string, todayKey: string): DayStatus {
+  const record = getDayRecord(data, date);
+  const progress = getDayProgress(record, data.config);
+  if (date === todayKey) return "today";
+  if (date > todayKey) return "future";
+  if (progress === 100) return "completed";
+  if (progress > 0) return "partial";
+  return "missed";
+}
+
 export function emptyRecord(date: string): DayRecord {
   return {
     date,
