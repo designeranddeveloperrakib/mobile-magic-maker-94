@@ -124,20 +124,114 @@ export function formatDateLabel(date: string | Date): string {
   });
 }
 
+// ---------------- Day record helpers ----------------
+
+export function toDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+export function emptyRecord(date: string): DayRecord {
+  return {
+    date,
+    exerciseMinutes: 0,
+    germanMinutes: 0,
+    businessCompleted: false,
+    businessNote: "",
+    savingsAmount: 0,
+  };
+}
+
+export function getDayRecord(data: ChallengeData, date: string): DayRecord {
+  return { ...emptyRecord(date), ...data.records[date] };
+}
+
+export function getGoalStatus(record: DayRecord, config: ChallengeConfig) {
+  return {
+    exercise: record.exerciseMinutes >= config.exerciseTarget,
+    german: record.germanMinutes >= config.germanTarget,
+    business: record.businessCompleted,
+    savings: record.savingsAmount >= config.savingsTarget,
+  };
+}
+
+export function getDayProgress(record: DayRecord, config: ChallengeConfig): number {
+  const s = getGoalStatus(record, config);
+  return (Number(s.exercise) + Number(s.german) + Number(s.business) + Number(s.savings)) * 25;
+}
+
+export function isDayCompleted(record: DayRecord, config: ChallengeConfig): boolean {
+  return getDayProgress(record, config) === 100;
+}
+
+/** Persist (or clear) a single day's record. Empty days are removed to keep storage small. */
+export function setDayRecord(data: ChallengeData, record: DayRecord): ChallengeData {
+  const isEmpty =
+    !record.exerciseMinutes &&
+    !record.germanMinutes &&
+    !record.businessCompleted &&
+    !record.savingsAmount &&
+    !record.businessNote?.trim();
+
+  const records = { ...data.records };
+  if (isEmpty) delete records[record.date];
+  else records[record.date] = record;
+
+  return { ...data, records };
+}
+
+// ---------------- Reactive store (shared + cross-tab) ----------------
+
+let store: ChallengeData | null = null;
+const listeners = new Set<(d: ChallengeData) => void>();
+
+function getStore(): ChallengeData {
+  if (!store) store = loadChallengeData();
+  return store;
+}
+
+function setStore(next: ChallengeData, persist = true) {
+  store = next;
+  if (persist) saveChallengeData(next);
+  listeners.forEach((l) => l(next));
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key === STORAGE_KEY) setStore(loadChallengeData(), false);
+  });
+}
+
+/** Reload from localStorage into the shared store (use after import/reset). */
+export function refreshChallengeData() {
+  setStore(loadChallengeData(), false);
+}
+
 export function useChallengeData() {
-  const [data, setData] = useState<ChallengeData>(loadChallengeData);
+  // Start from defaults on the server / first render, hydrate in an effect.
+  const [data, setData] = useState<ChallengeData>(createDefaultData);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setData(loadChallengeData());
+    setData(getStore());
+    setHydrated(true);
+    const listener = (d: ChallengeData) => setData(d);
+    listeners.add(listener);
+    return () => {
+      listeners.delete(listener);
+    };
   }, []);
 
   const update = (updater: (prev: ChallengeData) => ChallengeData) => {
-    setData((prev) => {
-      const next = updater(prev);
-      saveChallengeData(next);
-      return next;
-    });
+    setStore(updater(getStore()));
   };
 
-  return { data, update };
+  const updateDay = (date: string, updater: (prev: DayRecord) => DayRecord) => {
+    const current = getStore();
+    setStore(setDayRecord(current, updater(getDayRecord(current, date))));
+  };
+
+  return { data, update, updateDay, hydrated };
 }

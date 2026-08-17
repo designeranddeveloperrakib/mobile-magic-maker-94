@@ -1,5 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useChallengeData } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,13 +12,23 @@ export const Route = createFileRoute("/setup")({
 });
 
 function Setup() {
-  const { data, update } = useChallengeData();
+  const { data, update, hydrated } = useChallengeData();
   const [startDate, setStartDate] = useState(data.config.startDate);
   const [exerciseTarget, setExerciseTarget] = useState(String(data.config.exerciseTarget));
   const [germanTarget, setGermanTarget] = useState(String(Math.floor(data.config.germanTarget / 60)));
   const [savingsTarget, setSavingsTarget] = useState(String(data.config.savingsTarget));
+  const [synced, setSynced] = useState(false);
 
-  if (data.onboardingCompleted) {
+  useEffect(() => {
+    if (!hydrated || synced) return;
+    setStartDate(data.config.startDate);
+    setExerciseTarget(String(data.config.exerciseTarget));
+    setGermanTarget(String(Math.floor(data.config.germanTarget / 60)));
+    setSavingsTarget(String(data.config.savingsTarget));
+    setSynced(true);
+  }, [hydrated, synced, data.config]);
+
+  if (hydrated && data.onboardingCompleted) {
     return <Navigate to="/" replace />;
   }
 

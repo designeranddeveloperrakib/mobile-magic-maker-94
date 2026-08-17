@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
-import { useChallengeData, formatDateLabel, formatCurrency } from "@/lib/storage";
+import { useChallengeData, formatDateLabel, formatCurrency, toDateKey, getDayRecord } from "@/lib/storage";
 import { CircularProgress } from "@/components/circular-progress";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,20 +24,22 @@ const QUOTES = [
 ];
 
 function Home() {
-  const { data, update } = useChallengeData();
+  const { data, updateDay, hydrated } = useChallengeData();
+
+  const today = toDateKey(new Date());
+  const todayRecord = getDayRecord(data, today);
+
+  if (!hydrated) {
+    return (
+      <MobileShell>
+        <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">Loading…</div>
+      </MobileShell>
+    );
+  }
 
   if (!data.onboardingCompleted) {
     return <Navigate to="/setup" replace />;
   }
-
-  const today = new Date().toISOString().split("T")[0] ?? "";
-  const todayRecord = data.records[today] ?? {
-    exerciseMinutes: 0,
-    germanMinutes: 0,
-    businessCompleted: false,
-    businessNote: "",
-    savingsAmount: 0,
-  };
 
   const exerciseDone = (todayRecord.exerciseMinutes ?? 0) >= data.config.exerciseTarget;
   const germanDone = (todayRecord.germanMinutes ?? 0) >= data.config.germanTarget;
@@ -54,17 +56,7 @@ function Home() {
   const quote = QUOTES[(currentDay - 1) % QUOTES.length];
 
   const updateToday = (patch: Partial<typeof todayRecord>) => {
-    update((prev) => ({
-      ...prev,
-      records: {
-        ...prev.records,
-        [today]: {
-          date: today,
-          ...todayRecord,
-          ...patch,
-        },
-      },
-    }));
+    updateDay(today, (prev) => ({ ...prev, ...patch }));
   };
 
   return (
