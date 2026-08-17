@@ -56,17 +56,7 @@ function Home() {
   const quote = QUOTES[(currentDay - 1) % QUOTES.length];
 
   const updateToday = (patch: Partial<typeof todayRecord>) => {
-    update((prev) => ({
-      ...prev,
-      records: {
-        ...prev.records,
-        [today]: {
-          date: today,
-          ...todayRecord,
-          ...patch,
-        },
-      },
-    }));
+    updateDay(today, (prev) => ({ ...prev, ...patch }));
   };
 
   return (
