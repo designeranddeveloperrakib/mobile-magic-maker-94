@@ -48,6 +48,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       // Ignore storage errors.
     }
 
+    const cleanup = () => {};
     if (theme === "system") {
       const mql = window.matchMedia("(prefers-color-scheme: dark)");
       const onChange = () => {
@@ -59,6 +60,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       mql.addEventListener("change", onChange);
       return () => mql.removeEventListener("change", onChange);
     }
+    return cleanup;
   }, [theme]);
 
   const setTheme = (next: Theme) => {

@@ -39,7 +39,7 @@ export type ChallengeData = {
 const STORAGE_KEY = "challenge365-data";
 
 const DEFAULT_CONFIG: ChallengeConfig = {
-  startDate: new Date().toISOString().split("T")[0],
+  startDate: new Date().toISOString().split("T")[0] ?? "",
   exerciseTarget: 60,
   germanTarget: 180,
   savingsTarget: 300,
