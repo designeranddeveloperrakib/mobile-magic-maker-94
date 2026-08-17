@@ -29,6 +29,7 @@ export type ChallengeSettings = {
 
 export type ChallengeData = {
   version: 1;
+  onboardingCompleted: boolean;
   config: ChallengeConfig;
   records: Record<string, DayRecord>;
   longestStreak: number;
@@ -36,9 +37,9 @@ export type ChallengeData = {
   settings: ChallengeSettings;
 };
 
-const STORAGE_KEY = "challenge365-data";
+export const STORAGE_KEY = "challenge365-data";
 
-const DEFAULT_CONFIG: ChallengeConfig = {
+export const DEFAULT_CONFIG: ChallengeConfig = {
   startDate: new Date().toISOString().split("T")[0] ?? "",
   exerciseTarget: 60,
   germanTarget: 180,
