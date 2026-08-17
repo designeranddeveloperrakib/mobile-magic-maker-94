@@ -62,7 +62,7 @@ function Home() {
           date: today,
           ...todayRecord,
           ...patch,
-        } as const,
+        },
       },
     }));
   };
