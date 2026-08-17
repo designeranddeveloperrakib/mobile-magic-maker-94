@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
 import { useChallengeData, formatDateLabel } from "@/lib/storage";
 import { cn } from "@/lib/utils";
