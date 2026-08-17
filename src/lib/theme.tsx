@@ -32,10 +32,8 @@ function resolveTheme(theme: Theme): "light" | "dark" {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => getInitialTheme());
   const [resolved, setResolved] = useState<"light" | "dark">(() => resolveTheme(getInitialTheme()));
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const root = document.documentElement;
     const resolvedValue = resolveTheme(theme);
     setResolved(resolvedValue);
@@ -67,10 +65,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setThemeState(next);
   };
 
-  // Avoid hydration mismatch: render nothing theme-dependent until mounted.
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolved }}>
-      {mounted ? children : null}
+      {children}
     </ThemeContext.Provider>
   );
 }
