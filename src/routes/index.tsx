@@ -59,9 +59,10 @@ function Home() {
       records: {
         ...prev.records,
         [today]: {
+          date: today,
           ...todayRecord,
           ...patch,
-        },
+        } as const,
       },
     }));
   };
