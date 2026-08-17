@@ -12,6 +12,11 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { data } = useChallengeData();
+
+  if (!data.onboardingCompleted) {
+    return <Navigate to="/setup" replace />;
+  }
+
   const today = new Date().toISOString().split("T")[0] ?? "";
   const todayRecord = data.records[today];
 
