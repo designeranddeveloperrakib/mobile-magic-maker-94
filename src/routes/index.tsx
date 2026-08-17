@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
 import { useChallengeData, formatDateLabel } from "@/lib/storage";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Dumbbell, Languages, Briefcase, PiggyBank } from "lucide-react";
@@ -90,14 +91,10 @@ function Home() {
           })}
         </section>
 
-        <p className="text-center text-sm italic text-muted-foreground">
-          &ldquo;One day at a time.&rdquo;
-        </p>
-      </div>
-    </MobileShell>
+      <p className="text-center text-sm italic text-muted-foreground">
+        &ldquo;One day at a time.&rdquo;
+      </p>
+    </div>
+  </MobileShell>
   );
-}
-
-function cn(...inputs: (string | false | undefined)[]) {
-  return inputs.filter(Boolean).join(" ");
 }
