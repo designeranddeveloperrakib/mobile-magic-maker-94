@@ -78,15 +78,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" },
+      { title: "Challenge 365" },
+      { name: "description", content: "Track your 365-day personal challenge: exercise, German learning, business, and savings." },
+      { name: "author", content: "Challenge 365" },
+      { property: "og:title", content: "Challenge 365" },
+      { property: "og:description", content: "Track your 365-day personal challenge: exercise, German learning, business, and savings." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:site", content: "@challenge365" },
     ],
     links: [
       {
@@ -121,8 +121,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <ThemeProvider>
+        <Toaster richColors position="top-center" />
+        <Outlet />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
