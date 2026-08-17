@@ -60,6 +60,7 @@ const DEFAULT_SETTINGS: ChallengeSettings = {
 function createDefaultData(): ChallengeData {
   return {
     version: 1,
+    onboardingCompleted: false,
     config: DEFAULT_CONFIG,
     records: {},
     longestStreak: 0,
