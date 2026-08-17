@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
-import { useChallengeData, formatDateLabel, formatCurrency } from "@/lib/storage";
+import { useChallengeData, formatDateLabel, formatCurrency, toDateKey, getDayRecord } from "@/lib/storage";
 import { CircularProgress } from "@/components/circular-progress";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
