@@ -1,4 +1,4 @@
-import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Navigate, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { MobileShell } from "@/components/mobile-shell";
 import { useChallengeData, formatDateLabel, formatCurrency, toDateKey, getDayRecord, getStreaks } from "@/lib/storage";
