@@ -227,8 +227,15 @@ function Home() {
                 className="h-9 w-32"
               />
             </div>
+            <Link
+              to="/savings"
+              className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            >
+              View savings tracker →
+            </Link>
           </GoalCard>
         </section>
+
 
         <p className="text-center text-sm italic text-muted-foreground">&ldquo;{quote}&rdquo;</p>
       </div>
