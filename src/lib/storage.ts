@@ -264,3 +264,54 @@ export function useChallengeData() {
 
   return { data, update, updateDay, hydrated };
 }
+
+// ---------------- Streaks ----------------
+
+function shiftDate(date: string, days: number): string {
+  const d = parseDateKey(date);
+  d.setDate(d.getDate() + days);
+  return toDateKey(d);
+}
+
+/** A day counts only when all four goals are completed. */
+export function isDateCompleted(data: ChallengeData, date: string): boolean {
+  return isDayCompleted(getDayRecord(data, date), data.config);
+}
+
+/**
+ * Current streak: consecutive fully-completed days ending today.
+ * Today still in progress does not break the streak (we count back from yesterday).
+ */
+export function getCurrentStreak(data: ChallengeData, todayKey: string): number {
+  let cursor = isDateCompleted(data, todayKey) ? todayKey : shiftDate(todayKey, -1);
+  let streak = 0;
+  while (cursor >= data.config.startDate && isDateCompleted(data, cursor)) {
+    streak += 1;
+    cursor = shiftDate(cursor, -1);
+  }
+  return streak;
+}
+
+/** Longest run of consecutive completed days across all records. */
+export function getLongestStreak(data: ChallengeData): number {
+  const dates = Object.keys(data.records)
+    .filter((d) => isDateCompleted(data, d))
+    .sort();
+  let best = 0;
+  let run = 0;
+  let prev: string | null = null;
+  for (const date of dates) {
+    run = prev && shiftDate(prev, 1) === date ? run + 1 : 1;
+    if (run > best) best = run;
+    prev = date;
+  }
+  return best;
+}
+
+export type StreakInfo = { current: number; longest: number };
+
+export function getStreaks(data: ChallengeData, todayKey: string): StreakInfo {
+  const current = getCurrentStreak(data, todayKey);
+  const longest = Math.max(data.longestStreak ?? 0, getLongestStreak(data), current);
+  return { current, longest };
+}
