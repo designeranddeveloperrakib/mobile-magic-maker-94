@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MobileShell } from "@/components/mobile-shell";
 import { Card, CardContent } from "@/components/ui/card";
@@ -87,10 +87,19 @@ function HistoryPage() {
   return (
     <MobileShell>
       <div className="space-y-5">
-        <header className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight">History</h1>
-          <p className="text-sm text-muted-foreground">Tap a day to view or edit its record.</p>
+        <header className="flex items-end justify-between gap-2">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold tracking-tight">History</h1>
+            <p className="text-sm text-muted-foreground">Tap a day to view or edit its record.</p>
+          </div>
+          <Link
+            to="/monthly"
+            className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+          >
+            Monthly
+          </Link>
         </header>
+
 
         <div className="flex gap-2 overflow-x-auto pb-1">
           {FILTERS.map((f) => (
