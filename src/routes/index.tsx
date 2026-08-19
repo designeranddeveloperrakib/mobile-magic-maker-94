@@ -1,7 +1,6 @@
-import { createFileRoute, Navigate, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/mobile-shell";
-import { useChallengeData, formatDateLabel, formatCurrency, toDateKey, getDayRecord, getStreaks } from "@/lib/storage";
+import { useChallengeData, formatDateLabel, formatCurrency, toDateKey, getDayRecord } from "@/lib/storage";
 import { CircularProgress } from "@/components/circular-progress";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { Dumbbell, Languages, Briefcase, PiggyBank, Flame, Trophy } from "lucide-react";
+import { Dumbbell, Languages, Briefcase, PiggyBank } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -25,18 +24,10 @@ const QUOTES = [
 ];
 
 function Home() {
-  const { data, update, updateDay, hydrated } = useChallengeData();
+  const { data, updateDay, hydrated } = useChallengeData();
 
   const today = toDateKey(new Date());
   const todayRecord = getDayRecord(data, today);
-  const streaks = getStreaks(data, today);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    if (streaks.longest > (data.longestStreak ?? 0)) {
-      update((prev) => ({ ...prev, longestStreak: streaks.longest }));
-    }
-  }, [hydrated, streaks.longest, data.longestStreak]);
 
   if (!hydrated) {
     return (
@@ -97,31 +88,6 @@ function Home() {
             )}
           </CardContent>
         </Card>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Card className="border border-border">
-            <CardContent className="flex items-center gap-3 p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-500/15 text-orange-500">
-                <Flame className="h-5 w-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xl font-bold leading-tight">{streaks.current}</p>
-                <p className="truncate text-xs text-muted-foreground">Current streak</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border border-border">
-            <CardContent className="flex items-center gap-3 p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-400/15 text-amber-500">
-                <Trophy className="h-5 w-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xl font-bold leading-tight">{streaks.longest}</p>
-                <p className="truncate text-xs text-muted-foreground">Longest streak</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         <section className="grid gap-3">
           <GoalCard
@@ -227,15 +193,8 @@ function Home() {
                 className="h-9 w-32"
               />
             </div>
-            <Link
-              to="/savings"
-              className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-            >
-              View savings tracker →
-            </Link>
           </GoalCard>
         </section>
-
 
         <p className="text-center text-sm italic text-muted-foreground">&ldquo;{quote}&rdquo;</p>
       </div>

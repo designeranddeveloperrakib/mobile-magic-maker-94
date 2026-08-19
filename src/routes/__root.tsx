@@ -8,21 +8,6 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-function ServiceWorkerRegistration() {
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("/sw.js")
-          .catch((error) => {
-            console.error("Service Worker registration failed:", error);
-          });
-      });
-    }
-  }, []);
-
-  return null;
-}
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
@@ -104,20 +89,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@challenge365" },
     ],
     links: [
-  {
-    rel: "stylesheet",
-    href: appCss,
-  },
-  {
-    rel: "icon",
-    href: "/favicon.ico",
-    type: "image/x-icon",
-  },
-  {
-    rel: "manifest",
-    href: "/manifest.webmanifest",
-  },
-],
+      {
+        rel: "stylesheet",
+        href: appCss,
+      },
+      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -161,7 +138,6 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ServiceWorkerRegistration />
       <ThemeProvider>
         <Toaster richColors position="top-center" />
         <Outlet />

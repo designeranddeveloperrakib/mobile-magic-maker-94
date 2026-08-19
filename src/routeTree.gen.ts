@@ -12,9 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as CalendarRouteImport } from './routes/calendar'
-import { Route as HistoryRouteImport } from './routes/history'
-import { Route as MonthlyRouteImport } from './routes/monthly'
-import { Route as SavingsRouteImport } from './routes/savings'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SetupRouteImport } from './routes/setup'
 import { Route as StatisticsRouteImport } from './routes/statistics'
@@ -32,21 +29,6 @@ const AchievementsRoute = AchievementsRouteImport.update({
 const CalendarRoute = CalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HistoryRoute = HistoryRouteImport.update({
-  id: '/history',
-  path: '/history',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MonthlyRoute = MonthlyRouteImport.update({
-  id: '/monthly',
-  path: '/monthly',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SavingsRoute = SavingsRouteImport.update({
-  id: '/savings',
-  path: '/savings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -69,9 +51,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRoute
   '/calendar': typeof CalendarRoute
-  '/history': typeof HistoryRoute
-  '/monthly': typeof MonthlyRoute
-  '/savings': typeof SavingsRoute
   '/settings': typeof SettingsRoute
   '/setup': typeof SetupRoute
   '/statistics': typeof StatisticsRoute
@@ -80,9 +59,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRoute
   '/calendar': typeof CalendarRoute
-  '/history': typeof HistoryRoute
-  '/monthly': typeof MonthlyRoute
-  '/savings': typeof SavingsRoute
   '/settings': typeof SettingsRoute
   '/setup': typeof SetupRoute
   '/statistics': typeof StatisticsRoute
@@ -92,9 +68,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRoute
   '/calendar': typeof CalendarRoute
-  '/history': typeof HistoryRoute
-  '/monthly': typeof MonthlyRoute
-  '/savings': typeof SavingsRoute
   '/settings': typeof SettingsRoute
   '/setup': typeof SetupRoute
   '/statistics': typeof StatisticsRoute
@@ -102,34 +75,15 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/achievements'
-    | '/calendar'
-    | '/history'
-    | '/monthly'
-    | '/savings'
-    | '/settings'
-    | '/setup'
-    | '/statistics'
+    '/' | '/achievements' | '/calendar' | '/settings' | '/setup' | '/statistics'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/achievements'
-    | '/calendar'
-    | '/history'
-    | '/monthly'
-    | '/savings'
-    | '/settings'
-    | '/setup'
-    | '/statistics'
+    '/' | '/achievements' | '/calendar' | '/settings' | '/setup' | '/statistics'
   id:
     | '__root__'
     | '/'
     | '/achievements'
     | '/calendar'
-    | '/history'
-    | '/monthly'
-    | '/savings'
     | '/settings'
     | '/setup'
     | '/statistics'
@@ -139,9 +93,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AchievementsRoute: typeof AchievementsRoute
   CalendarRoute: typeof CalendarRoute
-  HistoryRoute: typeof HistoryRoute
-  MonthlyRoute: typeof MonthlyRoute
-  SavingsRoute: typeof SavingsRoute
   SettingsRoute: typeof SettingsRoute
   SetupRoute: typeof SetupRoute
   StatisticsRoute: typeof StatisticsRoute
@@ -168,27 +119,6 @@ declare module '@tanstack/react-router' {
       path: '/calendar'
       fullPath: '/calendar'
       preLoaderRoute: typeof CalendarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/history': {
-      id: '/history'
-      path: '/history'
-      fullPath: '/history'
-      preLoaderRoute: typeof HistoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/monthly': {
-      id: '/monthly'
-      path: '/monthly'
-      fullPath: '/monthly'
-      preLoaderRoute: typeof MonthlyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/savings': {
-      id: '/savings'
-      path: '/savings'
-      fullPath: '/savings'
-      preLoaderRoute: typeof SavingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -219,9 +149,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AchievementsRoute: AchievementsRoute,
   CalendarRoute: CalendarRoute,
-  HistoryRoute: HistoryRoute,
-  MonthlyRoute: MonthlyRoute,
-  SavingsRoute: SavingsRoute,
   SettingsRoute: SettingsRoute,
   SetupRoute: SetupRoute,
   StatisticsRoute: StatisticsRoute,

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MobileShell } from "@/components/mobile-shell";
 import { Card, CardContent } from "@/components/ui/card";
@@ -81,19 +81,10 @@ function CalendarPage() {
   return (
     <MobileShell>
       <div className="space-y-5">
-        <header className="flex items-end justify-between gap-2">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight">365 Days</h1>
-            <p className="text-sm text-muted-foreground">Tap any day to view or edit it.</p>
-          </div>
-          <Link
-            to="/history"
-            className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-          >
-            History
-          </Link>
+        <header className="space-y-1">
+          <h1 className="text-2xl font-bold tracking-tight">365 Days</h1>
+          <p className="text-sm text-muted-foreground">Tap any day to view or edit it.</p>
         </header>
-
 
         <Card className="border border-border">
           <CardContent className="space-y-4 py-5">
