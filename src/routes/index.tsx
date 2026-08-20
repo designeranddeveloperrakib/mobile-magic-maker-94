@@ -22,6 +22,16 @@ const QUOTES = [
   "Discipline today. Freedom tomorrow.",
   "Your future self is watching.",
   "Keep going.",
+  "Small steps lead to big results.",
+  "Consistency beats intensity.",
+  "You are building a better version of yourself.",
+  "Show up, even when you don't feel like it.",
+  "The journey of 365 days begins with a single day.",
+  "Make today count.",
+  "Progress, not perfection.",
+  "Every completed day is a win.",
+  "Stay hard. Stay focused.",
+  "Your discipline is your freedom.",
 ];
 
 function Home() {
