@@ -71,10 +71,54 @@ function Settings() {
           <CardHeader>
             <CardTitle className="text-base">Data</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Backup, restore, and reset options will be available in Phase 14.
+              Your backup file contains every day record, targets, streaks, achievements and settings.
             </p>
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" className="w-full" onClick={handleExport}>
+                <Download className="mr-2 h-4 w-4" /> Export
+              </Button>
+              <Button variant="outline" className="w-full" onClick={() => fileRef.current?.click()}>
+                <Upload className="mr-2 h-4 w-4" /> Import
+              </Button>
+            </div>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={handleImport}
+            />
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="w-full">
+                  <Trash2 className="mr-2 h-4 w-4" /> Reset Challenge
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Reset everything?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This permanently deletes all Challenge 365 data on this device — day records, streaks,
+                    achievements and settings. Export a backup first if you want to keep it.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      resetChallengeData();
+                      toast.success("Challenge reset");
+                      navigate({ to: "/setup" });
+                    }}
+                  >
+                    Delete all data
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardContent>
         </Card>
       </div>
