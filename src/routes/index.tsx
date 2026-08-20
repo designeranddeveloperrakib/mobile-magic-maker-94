@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { Dumbbell, Languages, Briefcase, PiggyBank, Flame, Trophy } from "lucide-react";
+import { Dumbbell, Languages, Briefcase, PiggyBank, Flame, Trophy, Quote } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Home,
