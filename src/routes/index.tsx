@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { Dumbbell, Languages, Briefcase, PiggyBank, Flame, Trophy } from "lucide-react";
+import { Dumbbell, Languages, Briefcase, PiggyBank, Flame, Trophy, Quote } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -22,6 +22,16 @@ const QUOTES = [
   "Discipline today. Freedom tomorrow.",
   "Your future self is watching.",
   "Keep going.",
+  "Small steps lead to big results.",
+  "Consistency beats intensity.",
+  "You are building a better version of yourself.",
+  "Show up, even when you don't feel like it.",
+  "The journey of 365 days begins with a single day.",
+  "Make today count.",
+  "Progress, not perfection.",
+  "Every completed day is a win.",
+  "Stay hard. Stay focused.",
+  "Your discipline is your freedom.",
 ];
 
 function Home() {
@@ -236,8 +246,17 @@ function Home() {
           </GoalCard>
         </section>
 
-
-        <p className="text-center text-sm italic text-muted-foreground">&ldquo;{quote}&rdquo;</p>
+        <Card className="border border-border bg-muted/30">
+          <CardContent className="flex items-start gap-3 p-4">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Quote className="h-4 w-4" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Daily Motivation</p>
+              <p className="text-base font-medium leading-snug text-foreground">&ldquo;{quote}&rdquo;</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </MobileShell>
   );
