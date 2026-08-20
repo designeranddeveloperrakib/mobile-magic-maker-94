@@ -1,11 +1,26 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useRef } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { MobileShell } from "@/components/mobile-shell";
 import { useTheme } from "@/lib/theme";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Moon, Sun, Monitor } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Moon, Sun, Monitor, Download, Upload, Trash2 } from "lucide-react";
+import { backupFileName, exportBackup, importBackup, resetChallengeData } from "@/lib/storage";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
@@ -13,6 +28,36 @@ export const Route = createFileRoute("/settings")({
 
 function Settings() {
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  function handleExport() {
+    try {
+      const blob = new Blob([exportBackup()], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = backupFileName();
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Backup exported");
+    } catch {
+      toast.error("Could not export backup");
+    }
+  }
+
+  async function handleImport(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    const text = await file.text();
+    if (importBackup(text)) {
+      toast.success("Backup restored");
+    } else {
+      toast.error("Invalid backup file");
+    }
+  }
+
 
   return (
     <MobileShell>
@@ -71,10 +116,54 @@ function Settings() {
           <CardHeader>
             <CardTitle className="text-base">Data</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Backup, restore, and reset options will be available in Phase 14.
+              Your backup file contains every day record, targets, streaks, achievements and settings.
             </p>
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" className="w-full" onClick={handleExport}>
+                <Download className="mr-2 h-4 w-4" /> Export
+              </Button>
+              <Button variant="outline" className="w-full" onClick={() => fileRef.current?.click()}>
+                <Upload className="mr-2 h-4 w-4" /> Import
+              </Button>
+            </div>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={handleImport}
+            />
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="w-full">
+                  <Trash2 className="mr-2 h-4 w-4" /> Reset Challenge
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Reset everything?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This permanently deletes all Challenge 365 data on this device — day records, streaks,
+                    achievements and settings. Export a backup first if you want to keep it.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      resetChallengeData();
+                      toast.success("Challenge reset");
+                      navigate({ to: "/setup" });
+                    }}
+                  >
+                    Delete all data
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardContent>
         </Card>
       </div>

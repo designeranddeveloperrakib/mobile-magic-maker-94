@@ -103,12 +103,32 @@ export function exportBackup(): string {
 export function importBackup(json: string): boolean {
   try {
     const parsed = JSON.parse(json) as ChallengeData;
-    if (!parsed || parsed.version !== 1) return false;
-    saveChallengeData({ ...createDefaultData(), ...parsed });
+    if (!parsed || parsed.version !== 1 || typeof parsed.records !== "object") return false;
+    const base = createDefaultData();
+    saveChallengeData({
+      ...base,
+      ...parsed,
+      config: { ...base.config, ...(parsed.config ?? {}) },
+      settings: { ...base.settings, ...(parsed.settings ?? {}) },
+      records: parsed.records ?? {},
+      achievements: parsed.achievements ?? [],
+    });
+    refreshChallengeData();
     return true;
   } catch {
     return false;
   }
+}
+
+export function backupFileName(): string {
+  const now = new Date();
+  const stamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  return `challenge365-backup-${stamp}.json`;
+}
+
+export function resetChallengeData() {
+  saveChallengeData(createDefaultData());
+  refreshChallengeData();
 }
 
 export function formatCurrency(amount: number): string {
