@@ -246,8 +246,17 @@ function Home() {
           </GoalCard>
         </section>
 
-
-        <p className="text-center text-sm italic text-muted-foreground">&ldquo;{quote}&rdquo;</p>
+        <Card className="border border-border bg-muted/30">
+          <CardContent className="flex items-start gap-3 p-4">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Quote className="h-4 w-4" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Daily Motivation</p>
+              <p className="text-base font-medium leading-snug text-foreground">&ldquo;{quote}&rdquo;</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </MobileShell>
   );
