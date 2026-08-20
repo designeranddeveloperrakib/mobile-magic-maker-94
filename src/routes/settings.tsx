@@ -1,11 +1,26 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useRef } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { MobileShell } from "@/components/mobile-shell";
 import { useTheme } from "@/lib/theme";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Moon, Sun, Monitor } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Moon, Sun, Monitor, Download, Upload, Trash2 } from "lucide-react";
+import { backupFileName, exportBackup, importBackup, resetChallengeData } from "@/lib/storage";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
@@ -13,6 +28,36 @@ export const Route = createFileRoute("/settings")({
 
 function Settings() {
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  function handleExport() {
+    try {
+      const blob = new Blob([exportBackup()], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = backupFileName();
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Backup exported");
+    } catch {
+      toast.error("Could not export backup");
+    }
+  }
+
+  async function handleImport(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    const text = await file.text();
+    if (importBackup(text)) {
+      toast.success("Backup restored");
+    } else {
+      toast.error("Invalid backup file");
+    }
+  }
+
 
   return (
     <MobileShell>
