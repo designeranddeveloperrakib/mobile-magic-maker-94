@@ -14,6 +14,7 @@ const navItems = [
 export function MobileShell({ children }: { children: React.ReactNode }) {
   const router = useRouterState();
   const currentPath = router.location.pathname;
+  useReminderScheduler();
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background text-foreground">
