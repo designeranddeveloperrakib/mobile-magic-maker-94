@@ -84,7 +84,12 @@ export function loadChallengeData(): ChallengeData {
       ...createDefaultData(),
       ...parsed,
       config: { ...DEFAULT_CONFIG, ...parsed.config },
-      settings: { ...DEFAULT_SETTINGS, ...parsed.settings, reminderTimes: { ...DEFAULT_SETTINGS.reminderTimes, ...parsed.settings?.reminderTimes } },
+      settings: {
+        ...DEFAULT_SETTINGS,
+        ...parsed.settings,
+        reminderTimes: { ...DEFAULT_SETTINGS.reminderTimes, ...parsed.settings?.reminderTimes },
+        reminderEnabled: { ...DEFAULT_SETTINGS.reminderEnabled, ...parsed.settings?.reminderEnabled },
+      },
     };
   } catch {
     return createDefaultData();
