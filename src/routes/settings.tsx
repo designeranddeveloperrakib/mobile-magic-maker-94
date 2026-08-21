@@ -19,8 +19,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Moon, Sun, Monitor, Download, Upload, Trash2 } from "lucide-react";
-import { backupFileName, exportBackup, importBackup, resetChallengeData } from "@/lib/storage";
+import { Input } from "@/components/ui/input";
+import { Moon, Sun, Monitor, Download, Upload, Trash2, Bell } from "lucide-react";
+import { backupFileName, exportBackup, importBackup, resetChallengeData, useChallengeData } from "@/lib/storage";
+import {
+  REMINDER_LABELS,
+  REMINDER_ORDER,
+  requestNotificationPermission,
+  useNotificationPermission,
+} from "@/lib/notifications";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
@@ -30,6 +37,34 @@ function Settings() {
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
+  const { data, update } = useChallengeData();
+  const { permission, setPermission } = useNotificationPermission();
+  const settings = data.settings;
+
+  async function handleToggleNotifications(checked: boolean) {
+    if (!checked) {
+      update((prev) => ({ ...prev, settings: { ...prev.settings, notificationsEnabled: false } }));
+      return;
+    }
+    const result = await requestNotificationPermission();
+    setPermission(result);
+    if (result === "unsupported") {
+      toast.error("Notifications aren't supported on this device");
+      return;
+    }
+    update((prev) => ({ ...prev, settings: { ...prev.settings, notificationsEnabled: true } }));
+    if (result === "granted") toast.success("Daily reminders enabled");
+    else toast.error("Allow notifications in your browser to receive reminders");
+  }
+
+  function handleTestNotification() {
+    if (permission !== "granted") {
+      toast.error("Notification permission is not granted");
+      return;
+    }
+    new Notification("Challenge 365", { body: "Reminders are working. Keep going!" });
+    toast.success("Test reminder sent");
+  }
 
   function handleExport() {
     try {
@@ -99,16 +134,77 @@ function Settings() {
 
         <Card className="border border-border">
           <CardHeader>
-            <CardTitle className="text-base">Challenge</CardTitle>
+            <CardTitle className="text-base">Daily Reminders</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <div className="space-y-0.5">
-                <Label htmlFor="notifications">Daily Reminders</Label>
-                <p className="text-xs text-muted-foreground">Reminder settings will be available in Phase 15.</p>
+                <Label htmlFor="notifications">Enable reminders</Label>
+                <p className="text-xs text-muted-foreground">
+                  {permission === "unsupported"
+                    ? "Notifications aren't supported on this device."
+                    : "Reminders fire while the app is open, once per goal per day."}
+                </p>
               </div>
-              <Switch id="notifications" disabled />
+              <Switch
+                id="notifications"
+                disabled={permission === "unsupported"}
+                checked={settings.notificationsEnabled}
+                onCheckedChange={handleToggleNotifications}
+              />
             </div>
+
+            {settings.notificationsEnabled && permission === "denied" && (
+              <p className="rounded-md bg-destructive/10 p-3 text-xs text-destructive">
+                Notifications are blocked in your browser settings. Allow them for this site to receive reminders.
+              </p>
+            )}
+
+            {settings.notificationsEnabled && (
+              <div className="space-y-3 border-t border-border pt-4">
+                {REMINDER_ORDER.map((key) => (
+                  <div key={key} className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <Switch
+                        id={`reminder-${key}`}
+                        checked={settings.reminderEnabled[key]}
+                        onCheckedChange={(checked) =>
+                          update((prev) => ({
+                            ...prev,
+                            settings: {
+                              ...prev.settings,
+                              reminderEnabled: { ...prev.settings.reminderEnabled, [key]: checked },
+                            },
+                          }))
+                        }
+                      />
+                      <Label htmlFor={`reminder-${key}`} className="truncate text-sm font-normal">
+                        {REMINDER_LABELS[key].title}
+                      </Label>
+                    </div>
+                    <Input
+                      type="time"
+                      aria-label={`${key} reminder time`}
+                      value={settings.reminderTimes[key]}
+                      disabled={!settings.reminderEnabled[key]}
+                      onChange={(e) =>
+                        update((prev) => ({
+                          ...prev,
+                          settings: {
+                            ...prev.settings,
+                            reminderTimes: { ...prev.settings.reminderTimes, [key]: e.target.value },
+                          },
+                        }))
+                      }
+                      className="h-9 w-32"
+                    />
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" className="w-full" onClick={handleTestNotification}>
+                  <Bell className="mr-2 h-4 w-4" /> Send a test reminder
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 

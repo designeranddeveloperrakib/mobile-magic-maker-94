@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, CalendarDays, BarChart3, Trophy, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useReminderScheduler } from "@/lib/notifications";
 
 const navItems = [
   { to: "/", label: "Home", icon: Home },
@@ -13,6 +14,7 @@ const navItems = [
 export function MobileShell({ children }: { children: React.ReactNode }) {
   const router = useRouterState();
   const currentPath = router.location.pathname;
+  useReminderScheduler();
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background text-foreground">

@@ -16,15 +16,13 @@ export type DayRecord = {
   savingsAmount: number;
 };
 
+export type ReminderKey = "exercise" | "german" | "business" | "savings";
+
 export type ChallengeSettings = {
   theme: "light" | "dark" | "system";
   notificationsEnabled: boolean;
-  reminderTimes: {
-    exercise: string;
-    german: string;
-    business: string;
-    savings: string;
-  };
+  reminderTimes: Record<ReminderKey, string>;
+  reminderEnabled: Record<ReminderKey, boolean>;
 };
 
 export type ChallengeData = {
@@ -55,6 +53,12 @@ const DEFAULT_SETTINGS: ChallengeSettings = {
     business: "14:00",
     savings: "20:00",
   },
+  reminderEnabled: {
+    exercise: true,
+    german: true,
+    business: true,
+    savings: true,
+  },
 };
 
 function createDefaultData(): ChallengeData {
@@ -80,7 +84,12 @@ export function loadChallengeData(): ChallengeData {
       ...createDefaultData(),
       ...parsed,
       config: { ...DEFAULT_CONFIG, ...parsed.config },
-      settings: { ...DEFAULT_SETTINGS, ...parsed.settings, reminderTimes: { ...DEFAULT_SETTINGS.reminderTimes, ...parsed.settings?.reminderTimes } },
+      settings: {
+        ...DEFAULT_SETTINGS,
+        ...parsed.settings,
+        reminderTimes: { ...DEFAULT_SETTINGS.reminderTimes, ...parsed.settings?.reminderTimes },
+        reminderEnabled: { ...DEFAULT_SETTINGS.reminderEnabled, ...parsed.settings?.reminderEnabled },
+      },
     };
   } catch {
     return createDefaultData();
