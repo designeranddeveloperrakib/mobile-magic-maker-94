@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, CalendarDays, BarChart3, Trophy, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useReminderScheduler } from "@/lib/notifications";
 
 const navItems = [
   { to: "/", label: "Home", icon: Home },
