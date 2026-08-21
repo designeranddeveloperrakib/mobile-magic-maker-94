@@ -16,15 +16,13 @@ export type DayRecord = {
   savingsAmount: number;
 };
 
+export type ReminderKey = "exercise" | "german" | "business" | "savings";
+
 export type ChallengeSettings = {
   theme: "light" | "dark" | "system";
   notificationsEnabled: boolean;
-  reminderTimes: {
-    exercise: string;
-    german: string;
-    business: string;
-    savings: string;
-  };
+  reminderTimes: Record<ReminderKey, string>;
+  reminderEnabled: Record<ReminderKey, boolean>;
 };
 
 export type ChallengeData = {
