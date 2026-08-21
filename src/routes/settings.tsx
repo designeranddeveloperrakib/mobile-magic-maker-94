@@ -19,8 +19,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Moon, Sun, Monitor, Download, Upload, Trash2 } from "lucide-react";
-import { backupFileName, exportBackup, importBackup, resetChallengeData } from "@/lib/storage";
+import { Input } from "@/components/ui/input";
+import { Moon, Sun, Monitor, Download, Upload, Trash2, Bell } from "lucide-react";
+import { backupFileName, exportBackup, importBackup, resetChallengeData, useChallengeData } from "@/lib/storage";
+import {
+  REMINDER_LABELS,
+  REMINDER_ORDER,
+  requestNotificationPermission,
+  useNotificationPermission,
+} from "@/lib/notifications";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
