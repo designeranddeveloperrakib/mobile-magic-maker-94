@@ -37,6 +37,34 @@ function Settings() {
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
+  const { data, update } = useChallengeData();
+  const { permission, setPermission } = useNotificationPermission();
+  const settings = data.settings;
+
+  async function handleToggleNotifications(checked: boolean) {
+    if (!checked) {
+      update((prev) => ({ ...prev, settings: { ...prev.settings, notificationsEnabled: false } }));
+      return;
+    }
+    const result = await requestNotificationPermission();
+    setPermission(result);
+    if (result === "unsupported") {
+      toast.error("Notifications aren't supported on this device");
+      return;
+    }
+    update((prev) => ({ ...prev, settings: { ...prev.settings, notificationsEnabled: true } }));
+    if (result === "granted") toast.success("Daily reminders enabled");
+    else toast.error("Allow notifications in your browser to receive reminders");
+  }
+
+  function handleTestNotification() {
+    if (permission !== "granted") {
+      toast.error("Notification permission is not granted");
+      return;
+    }
+    new Notification("Challenge 365", { body: "Reminders are working. Keep going!" });
+    toast.success("Test reminder sent");
+  }
 
   function handleExport() {
     try {
