@@ -53,6 +53,12 @@ const DEFAULT_SETTINGS: ChallengeSettings = {
     business: "14:00",
     savings: "20:00",
   },
+  reminderEnabled: {
+    exercise: true,
+    german: true,
+    business: true,
+    savings: true,
+  },
 };
 
 function createDefaultData(): ChallengeData {
