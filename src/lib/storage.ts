@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getActiveUserId, subscribeAccounts, userDataKey } from "./accounts";
 
 export type ChallengeConfig = {
   startDate: string; // ISO date string YYYY-MM-DD
@@ -106,8 +107,10 @@ export function loadChallengeData(): ChallengeData {
 
 export function saveChallengeData(data: ChallengeData) {
   if (typeof window === "undefined") return;
+  const key = currentKey();
+  if (!key) return;
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    window.localStorage.setItem(key, JSON.stringify(data));
   } catch {
     // Ignore storage errors (e.g., private mode).
   }
@@ -266,7 +269,15 @@ function setStore(next: ChallengeData, persist = true) {
 
 if (typeof window !== "undefined") {
   window.addEventListener("storage", (e) => {
-    if (e.key === STORAGE_KEY) setStore(loadChallengeData(), false);
+    if (e.key && e.key === currentKey()) setStore(loadChallengeData(), false);
+  });
+  // Switching / creating / signing out of a profile swaps the whole data bucket.
+  let lastUserId = getActiveUserId();
+  subscribeAccounts(() => {
+    const next = getActiveUserId();
+    if (next === lastUserId) return;
+    lastUserId = next;
+    setStore(loadChallengeData(), false);
   });
 }
 
