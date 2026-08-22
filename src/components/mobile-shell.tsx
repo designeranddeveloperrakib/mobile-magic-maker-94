@@ -1,7 +1,8 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, Navigate, useRouterState } from "@tanstack/react-router";
 import { Home, CalendarDays, BarChart3, Trophy, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useReminderScheduler } from "@/lib/notifications";
+import { useAccounts } from "@/lib/accounts";
 
 const navItems = [
   { to: "/", label: "Home", icon: Home },
@@ -14,7 +15,11 @@ const navItems = [
 export function MobileShell({ children }: { children: React.ReactNode }) {
   const router = useRouterState();
   const currentPath = router.location.pathname;
+  const { activeUser, hydrated } = useAccounts();
   useReminderScheduler();
+
+  // No profile signed in -> send to the profile picker.
+  if (hydrated && !activeUser) return <Navigate to="/accounts" replace />;
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background text-foreground">
