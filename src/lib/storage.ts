@@ -73,10 +73,18 @@ function createDefaultData(): ChallengeData {
   };
 }
 
+/** Storage key for the currently signed-in user (null when signed out). */
+function currentKey(): string | null {
+  const userId = getActiveUserId();
+  return userId ? userDataKey(userId) : null;
+}
+
 export function loadChallengeData(): ChallengeData {
   if (typeof window === "undefined") return createDefaultData();
+  const key = currentKey();
+  if (!key) return createDefaultData();
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(key);
     if (!raw) return createDefaultData();
     const parsed = JSON.parse(raw) as ChallengeData;
     // Fill defaults for missing fields to stay resilient.
