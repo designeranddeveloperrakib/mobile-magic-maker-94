@@ -20,7 +20,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-import { Moon, Sun, Monitor, Download, Upload, Trash2, Bell } from "lucide-react";
+import { Moon, Sun, Monitor, Download, Upload, Trash2, Bell, UserRound, LogOut, Users } from "lucide-react";
+import { deleteUser, renameUser, signOut, useAccounts } from "@/lib/accounts";
 import { backupFileName, exportBackup, importBackup, resetChallengeData, useChallengeData } from "@/lib/storage";
 import {
   REMINDER_LABELS,
@@ -38,6 +39,7 @@ function Settings() {
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const { data, update } = useChallengeData();
+  const { activeUser, users } = useAccounts();
   const { permission, setPermission } = useNotificationPermission();
   const settings = data.settings;
 
@@ -98,6 +100,78 @@ function Settings() {
     <MobileShell>
       <div className="space-y-6">
         <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+
+        <Card className="border border-border">
+          <CardHeader>
+            <CardTitle className="text-base">Account</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <UserRound className="h-5 w-5" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold">{activeUser?.name ?? "No profile"}</p>
+                <p className="text-xs text-muted-foreground">
+                  {users.length} profile{users.length === 1 ? "" : "s"} on this device
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="profileName">Display name</Label>
+              <Input
+                id="profileName"
+                value={activeUser?.name ?? ""}
+                onChange={(e) => activeUser && renameUser(activeUser.id, e.target.value)}
+                placeholder="Your name"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  signOut();
+                  navigate({ to: "/accounts", replace: true });
+                }}
+              >
+                <LogOut className="mr-2 h-4 w-4" /> Sign out
+              </Button>
+              <Button variant="outline" onClick={() => navigate({ to: "/accounts" })}>
+                <Users className="mr-2 h-4 w-4" /> Switch profile
+              </Button>
+            </div>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="w-full">
+                  <Trash2 className="mr-2 h-4 w-4" /> Delete this profile
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete this profile?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This permanently removes {activeUser?.name ?? "this profile"} and all of its challenge data from this
+                    device. Other profiles are not affected.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      if (activeUser) deleteUser(activeUser.id);
+                      navigate({ to: "/accounts", replace: true });
+                    }}
+                  >
+                    Delete profile
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardContent>
+        </Card>
 
         <Card className="border border-border">
           <CardHeader>
