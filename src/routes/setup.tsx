@@ -1,6 +1,7 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useChallengeData } from "@/lib/storage";
+import { useAccounts } from "@/lib/accounts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/setup")({
 
 function Setup() {
   const { data, update, hydrated } = useChallengeData();
+  const { activeUser, hydrated: accountsHydrated } = useAccounts();
   const [startDate, setStartDate] = useState(data.config.startDate);
   const [exerciseTarget, setExerciseTarget] = useState(String(data.config.exerciseTarget));
   const [germanTarget, setGermanTarget] = useState(String(Math.floor(data.config.germanTarget / 60)));
@@ -27,6 +29,10 @@ function Setup() {
     setSavingsTarget(String(data.config.savingsTarget));
     setSynced(true);
   }, [hydrated, synced, data.config]);
+
+  if (accountsHydrated && !activeUser) {
+    return <Navigate to="/accounts" replace />;
+  }
 
   if (hydrated && data.onboardingCompleted) {
     return <Navigate to="/" replace />;
